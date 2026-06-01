@@ -101,6 +101,71 @@
 
     .nav-links a:hover { color: var(--accent); }
 
+    /* ── HAMBURGER ── */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 36px;
+      height: 36px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 101;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s, background 0.2s;
+      transform-origin: center;
+    }
+
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--accent); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--accent); }
+
+    /* ── MOBILE NAV DRAWER ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.4rem; }
+
+      .nav-toggle { display: flex; }
+
+      .nav-links {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: rgba(10,15,30,0.97);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+        padding: 5rem 2rem 2rem;
+        transform: translateY(-110%);
+        transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        z-index: 99;
+      }
+
+      .nav-links.open { transform: translateY(0); }
+
+      .nav-links li {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-links li:last-child { border-bottom: none; }
+
+      .nav-links a {
+        display: block;
+        padding: 1rem 0;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+      }
+    }
+
     /* ── SECTIONS ── */
     section {
       position: relative;
@@ -688,7 +753,10 @@
 <!-- NAV -->
 <nav>
   <div class="nav-brand">ZIA.DEV</div>
-  <ul class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#projects">Projects</a></li>
@@ -736,7 +804,7 @@
       <div class="about-text fade-up">
         <h2 class="section-heading">About <span>Me</span></h2>
         <div class="section-divider"></div>
-        <p>I'm an aspiring Machine Learning Engineer in my final semester of a B.Sc. in Information Technology at the University of Sargodha, maintaining a strong CGPA of 3.52.</p>
+        <p>I'm an aspiring Machine Learning Engineer in my final semester of a BS in Information Technology at the University of Sargodha, maintaining a strong CGPA of 3.52.</p>
         <p>My focus lies at the intersection of audio signal processing, deep learning, and practical AI deployment. My final year project—an AI-based baby cry classifier—uses 1D CNNs, TensorFlow/Keras, and Librosa to identify 9 types of baby cries from raw audio, with a FastAPI backend for real-world usage.</p>
         <p>I hold Microsoft Azure AI/ML Fundamentals certification and several programming credentials. I'm proficient in Python, SQL, and the core data science stack, with hands-on experience in supervised and unsupervised machine learning.</p>
       </div>
@@ -746,7 +814,7 @@
           <div class="info-card-icon">🎓</div>
           <div>
             <div class="info-card-label">Degree</div>
-            <div class="info-card-value">B.Sc. Information Technology</div>
+            <div class="info-card-value">BS Information Technology</div>
           </div>
         </div>
         <div class="info-card">
@@ -897,6 +965,23 @@
           <span class="stack-tag">Data Integrity</span>
         </div>
       </div>
+
+      <div class="project-card fade-up" style="transition-delay:0.3s">
+        <div class="project-icon">📉</div>
+        <div class="project-type">Machine Learning Project</div>
+        <div class="project-title">Customer Churn Prediction</div>
+        <p class="project-desc">
+          Built and compared churn prediction models using Logistic Regression and Random Forest on a dataset of 7,043 customers, achieving 79.91% accuracy and an AUC score of 0.84. Performed full data preprocessing, feature analysis, and performance evaluation to identify at-risk customers.
+        </p>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">Scikit-learn</span>
+          <span class="stack-tag">Logistic Regression</span>
+          <span class="stack-tag">Random Forest</span>
+          <span class="stack-tag">Pandas</span>
+          <span class="stack-tag">EDA</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1015,6 +1100,23 @@
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Hamburger menu
+  const toggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('open');
+    navLinks.classList.toggle('open');
+  });
+
+  // Close menu when a link is clicked
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      toggle.classList.remove('open');
+      navLinks.classList.remove('open');
+    });
+  });
 
   // Trigger hero on load
   window.addEventListener('load', () => {
